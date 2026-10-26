@@ -1,30 +1,19 @@
-
--- PROJECT 2: HOTEL BOOKING & CANCELLATION ANALYSIS
-
 CREATE DATABASE IF NOT EXISTS hotel_booking_analysis;
 USE hotel_booking_analysis;
-
--- STEP 1: RECREATE TABLES
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS customers;
-
--- STEP 2: CREATE CUSTOMERS TABLE
 CREATE TABLE customers (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_name VARCHAR(100) NOT NULL,
     city VARCHAR(50),
     country VARCHAR(50)
 );
-
--- STEP 3: CREATE ROOMS TABLE
 CREATE TABLE rooms (
     room_id INT AUTO_INCREMENT PRIMARY KEY,
     room_type VARCHAR(50),
     price_per_night DECIMAL(10,2)
 );
-
--- STEP 4: CREATE BOOKINGS TABLE
 CREATE TABLE bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT,
@@ -38,8 +27,6 @@ CREATE TABLE bookings (
     FOREIGN KEY (room_id)
         REFERENCES rooms(room_id)
 );
-
--- STEP 5: INSERT GIRLS' NAMES
 INSERT INTO customers
 (customer_name, city, country)
 VALUES
@@ -48,8 +35,6 @@ VALUES
 ('Meena', 'Coimbatore', 'India'),
 ('Kavya', 'Bangalore', 'India'),
 ('Ananya', 'Salem', 'India');
-
--- STEP 6: INSERT ROOM DATA
 INSERT INTO rooms (room_type, price_per_night)
 VALUES
 ('Standard', 2000),
@@ -57,8 +42,6 @@ VALUES
 ('Suite', 6000),
 ('Single', 1500),
 ('Family', 4500);
-
--- STEP 7: INSERT BOOKING DATA
 INSERT INTO bookings
 (customer_id, room_id, booking_date,
  check_in, check_out, booking_status)
@@ -82,32 +65,20 @@ VALUES
 
 -- STEP 8: VIEW ALL CUSTOMERS
 SELECT * FROM customers;
-
--- STEP 9: VIEW ALL ROOMS
 SELECT * FROM rooms;
-
--- STEP 10: VIEW ALL BOOKINGS
 SELECT * FROM bookings;
-
--- STEP 11: TOTAL BOOKINGS
 SELECT COUNT(*) AS total_bookings
 FROM bookings;
-
--- STEP 12: BOOKING STATUS ANALYSIS
 SELECT booking_status,
        COUNT(*) AS total_bookings
 FROM bookings
 GROUP BY booking_status;
-
--- STEP 13: ROOM-WISE BOOKING COUNT
 SELECT r.room_type,
        COUNT(b.booking_id) AS total_bookings
 FROM rooms r
 JOIN bookings b ON r.room_id = b.room_id
 GROUP BY r.room_type
 ORDER BY total_bookings DESC;
-
--- STEP 14: ESTIMATED BOOKING VALUE
 SELECT r.room_type,
        SUM(r.price_per_night *
            DATEDIFF(b.check_out, b.check_in))
@@ -117,8 +88,6 @@ JOIN bookings b ON r.room_id = b.room_id
 WHERE b.booking_status IN ('Confirmed', 'Completed')
 GROUP BY r.room_type
 ORDER BY booking_value DESC;
-
--- STEP 15: ROOM-WISE CANCELLATION ANALYSIS
 SELECT r.room_type,
        COUNT(b.booking_id) AS cancelled_bookings
 FROM rooms r
@@ -126,8 +95,6 @@ JOIN bookings b ON r.room_id = b.room_id
 WHERE b.booking_status = 'Cancelled'
 GROUP BY r.room_type
 ORDER BY cancelled_bookings DESC;
-
--- STEP 16: CUSTOMER BOOKING DETAILS
 SELECT c.customer_name,
        r.room_type,
        b.check_in,
@@ -137,8 +104,6 @@ FROM customers c
 JOIN bookings b ON c.customer_id = b.customer_id
 JOIN rooms r ON b.room_id = r.room_id
 ORDER BY b.booking_date;
-
--- STEP 17: CANCELLATION RATE
 SELECT
     COUNT(*) AS total_bookings,
     SUM(CASE
@@ -152,17 +117,14 @@ SELECT
         END) * 100.0 / COUNT(*), 2
     ) AS cancellation_percentage
 FROM bookings;
-
--- STEP 18: AVERAGE STAY DURATION
 SELECT ROUND(
     AVG(DATEDIFF(check_out, check_in)), 2
 ) AS average_stay_nights
 FROM bookings
 WHERE booking_status IN ('Confirmed', 'Completed');
-
--- STEP 19: MONTHLY BOOKING ANALYSIS
 SELECT DATE_FORMAT(booking_date, '%Y-%m') AS booking_month,
        COUNT(*) AS total_bookings
 FROM bookings
 GROUP BY DATE_FORMAT(booking_date, '%Y-%m')
 ORDER BY booking_month;
+
