@@ -41,4 +41,3 @@ This project helped me practice SQL queries and analyze hotel booking data to un
 ## Project File
 `Hotel_Booking_Cancellation_Analysis.sql`
 
-*Note: This project uses sample data for learning purposes.*
